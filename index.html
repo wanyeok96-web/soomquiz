@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2f6df6">
+<title>정보검색론 스터디 · 퀴즈</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="hd-inner">
+    <div class="hd-text">
+      <h1>📚 정보검색론 스터디</h1>
+      <p class="hd-sub">모바일 학습 · 객관식 · 주관식 · 모의고사</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="테마 변경">🌓 자동</button>
+  </div>
+</header>
+
+<!-- ============ 홈(메인 메뉴) ============ -->
+<main id="view-home" class="view">
+  <div class="wrap">
+    <section class="dash card">
+      <div class="dash-row">
+        <div class="dash-item"><span class="dash-num" id="statMcq">0</span><span class="dash-lbl">객관식</span></div>
+        <div class="dash-item"><span class="dash-num" id="statShort">0</span><span class="dash-lbl">주관식</span></div>
+        <div class="dash-item"><span class="dash-num" id="statWrong">0</span><span class="dash-lbl">오답</span></div>
+        <div class="dash-item"><span class="dash-num" id="statAcc">–</span><span class="dash-lbl">누적정답률</span></div>
+      </div>
+      <div class="progress-line"><div class="progress-fill" id="homeProgress"></div></div>
+      <p class="hint" id="homeProgressTxt">아직 푼 문제가 없어요. 아래 메뉴에서 시작하세요!</p>
+    </section>
+
+    <div class="menu-grid">
+      <button class="menu-btn" data-go="learn">
+        <span class="menu-ico">📖</span><span class="menu-t">학습 모드</span>
+        <span class="menu-d">주차·주제별 핵심 요약</span>
+      </button>
+      <button class="menu-btn" data-go="mcqSetup">
+        <span class="menu-ico">✅</span><span class="menu-t">객관식 퀴즈</span>
+        <span class="menu-d">4지선다 · 해설 포함</span>
+      </button>
+      <button class="menu-btn" data-go="shortSetup">
+        <span class="menu-ico">✏️</span><span class="menu-t">주관식 퀴즈</span>
+        <span class="menu-d">단답형 · 자동+자가채점</span>
+      </button>
+      <button class="menu-btn" data-go="examIntro">
+        <span class="menu-ico">📝</span><span class="menu-t">모의고사</span>
+        <span class="menu-d">객관식20+주관식10 · 시간제한</span>
+      </button>
+      <button class="menu-btn" data-go="wrong">
+        <span class="menu-ico">🔁</span><span class="menu-t">오답노트</span>
+        <span class="menu-d">틀린 문제만 다시 풀기</span>
+      </button>
+      <button class="menu-btn" data-go="reset">
+        <span class="menu-ico">🗑️</span><span class="menu-t">기록 초기화</span>
+        <span class="menu-d">진도·오답·점수 삭제</span>
+      </button>
+    </div>
+    <p class="hint center foot">정보검색론(박정배 교수) 강의자료·중간고사 정리 기반 · 교육용 학습 도구</p>
+  </div>
+</main>
+
+<!-- ============ 학습 모드 ============ -->
+<section id="view-learn" class="view hidden">
+  <div class="wrap">
+    <div class="subnav">
+      <button class="btn back" data-go="home">← 홈</button>
+      <span class="subnav-title">학습 모드</span>
+    </div>
+    <div class="chips" id="learnSecChips"></div>
+    <div id="learnCards"></div>
+  </div>
+</section>
+
+<!-- ============ 퀴즈 설정(객관식/주관식 공용) ============ -->
+<section id="view-setup" class="view hidden">
+  <div class="wrap">
+    <div class="subnav">
+      <button class="btn back" data-go="home">← 홈</button>
+      <span class="subnav-title" id="setupTitle">퀴즈 설정</span>
+    </div>
+    <div class="card">
+      <label class="fld">출제 주제 선택</label>
+      <div class="chips" id="topicChips"></div>
+      <div class="row wrap-row" style="margin-top:14px">
+        <button class="btn gray sm" id="topicAll">전체 선택</button>
+        <button class="btn gray sm" id="topicNone">전체 해제</button>
+      </div>
+
+      <label class="fld" style="margin-top:18px">문항 수</label>
+      <div class="chips" id="countChips"></div>
+
+      <label class="fld" style="margin-top:18px">출제 순서</label>
+      <div class="chips" id="orderChips">
+        <div class="chip active" data-order="random">랜덤</div>
+        <div class="chip" data-order="seq">순서대로</div>
+      </div>
+
+      <div class="row" style="margin-top:22px">
+        <button class="btn primary big" id="startQuizBtn">퀴즈 시작 →</button>
+      </div>
+      <p class="hint" id="setupInfo"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 모의고사 인트로 ============ -->
+<section id="view-examIntro" class="view hidden">
+  <div class="wrap">
+    <div class="subnav">
+      <button class="btn back" data-go="home">← 홈</button>
+      <span class="subnav-title">모의고사</span>
+    </div>
+    <div class="card">
+      <h2 class="exam-h">📝 실전 모의고사</h2>
+      <ul class="exam-desc">
+        <li>객관식 <b>20문항</b> + 주관식 <b>10문항</b> (총 30문항, 랜덤 출제)</li>
+        <li>제한 시간 <b id="examMinLbl">25</b>분 · 문항당 배점 자동 계산</li>
+        <li>제출 시 채점 결과와 오답 해설을 확인할 수 있어요</li>
+        <li>틀린 문항은 자동으로 오답노트에 저장됩니다</li>
+      </ul>
+      <label class="fld">제한 시간</label>
+      <div class="chips" id="examTimeChips">
+        <div class="chip" data-min="15">15분</div>
+        <div class="chip active" data-min="25">25분</div>
+        <div class="chip" data-min="40">40분</div>
+        <div class="chip" data-min="0">시간제한 없음</div>
+      </div>
+      <div class="row" style="margin-top:22px">
+        <button class="btn primary big" id="startExamBtn">모의고사 시작 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 퀴즈 진행 ============ -->
+<section id="view-quiz" class="view hidden">
+  <div class="quiz-topbar">
+    <button class="btn back sm" id="quizQuit">← 나가기</button>
+    <div class="quiz-meta">
+      <span id="quizProgressLbl">1 / 10</span>
+      <span class="quiz-timer hidden" id="quizTimer">25:00</span>
+    </div>
+    <div class="quiz-score-badge" id="quizScoreBadge">0점</div>
+  </div>
+  <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBarFill"></div></div>
+
+  <div class="wrap">
+    <div class="qcard card">
+      <div class="q-top">
+        <span class="q-topic" id="qTopic">주제</span>
+        <span class="q-type" id="qType">객관식</span>
+      </div>
+      <div class="q-text" id="qText"></div>
+
+      <!-- 객관식 보기 -->
+      <div class="opts" id="qOpts"></div>
+
+      <!-- 주관식 입력 -->
+      <div class="short-wrap hidden" id="qShortWrap">
+        <input type="text" class="short-input" id="qShortInput" placeholder="답을 입력하고 확인을 누르세요" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="btn primary" id="qShortSubmit">확인</button>
+      </div>
+
+      <!-- 피드백/해설 -->
+      <div class="feedback hidden" id="qFeedback"></div>
+      <div class="explain hidden" id="qExplain"></div>
+
+      <div class="q-actions">
+        <button class="btn gray" id="qExplainBtn">💡 해설 보기</button>
+        <div class="q-actions-right">
+          <button class="btn ghost" id="qSkip">🤷 모름 · 넘기기</button>
+          <button class="btn ghost hidden" id="qSelfWrong">✗ 틀림</button>
+          <button class="btn ghost hidden" id="qSelfRight">✓ 맞음</button>
+          <button class="btn primary hidden" id="qNext">다음 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section id="view-result" class="view hidden">
+  <div class="wrap">
+    <div class="result-card card">
+      <div class="result-emoji" id="resultEmoji">🎉</div>
+      <h2 class="result-h" id="resultH">퀴즈 완료!</h2>
+      <div class="result-score" id="resultScore">0 / 0</div>
+      <div class="result-pct" id="resultPct">0%</div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="row col" style="margin-top:20px">
+        <button class="btn primary big" id="resultReview">📋 문항별 다시 보기</button>
+        <button class="btn gray big hidden" id="resultRetryWrong">🔁 틀린 문제만 다시 풀기</button>
+        <button class="btn ghost big" data-go="home">홈으로</button>
+      </div>
+    </div>
+    <div id="reviewList" class="hidden"></div>
+  </div>
+</section>
+
+<!-- 스크립트 -->
+<script src="data-mcq.js"></script>
+<script src="data-short.js"></script>
+<script src="data-notes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
