@@ -2,206 +2,334 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#2f6df6">
-<title>정보검색론 스터디 · 퀴즈</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#F2F2F7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="정보검색론">
+<title>정보검색론</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="app-header">
-  <div class="hd-inner">
-    <div class="hd-text">
-      <h1>📚 정보검색론 스터디</h1>
-      <p class="hd-sub">모바일 학습 · 객관식 · 주관식 · 모의고사</p>
+<!-- SVG 아이콘 심볼 -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M6 9.8V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.8"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.6C10.4 5.1 7.9 4.5 4.5 4.9v12.6c3.4-.4 5.9.2 7.5 1.6 1.6-1.4 4.1-2 7.5-1.6V4.9c-3.4-.4-5.9.2-7.5 1.7Z"/><path d="M12 6.6v12.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.3 12.2l2.5 2.5 4.9-5.4"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M18.2 5.8l-1.7 1.7M7.5 16.5l-1.7 1.7"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 6.5"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4.2L19.5 8.7a2 2 0 0 0 0-2.8l-1.4-1.4a2 2 0 0 0-2.8 0L4 15.8V20Z"/><path d="M14.5 5.5l4 4"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6.5 3h7l4.5 4.5V21H6.5z"/><path d="M13.5 3v4.5H18"/><path d="M9.5 12.5h5M9.5 16.5h5"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20.2 4.2v4.4h-4.4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15"/><path d="M9.5 7V5.2A1.2 1.2 0 0 1 10.7 4h2.6a1.2 1.2 0 0 1 1.2 1.2V7"/><path d="M6.7 7l.9 12.1a1 1 0 0 0 1 .9h6.8a1 1 0 0 0 1-.9L17.3 7"/></symbol>
+  <symbol id="i-theme" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 3.6a8.4 8.4 0 0 1 0 16.8Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 19.5V11M12 19.5V4.5M19 19.5v-6"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.2 17.5a6 6 0 1 1 5.6 0"/><path d="M9.5 20.5h5M10 17.5h4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 11v5.5"/><circle cx="12" cy="7.9" r=".9" fill="currentColor" stroke="none"/></symbol>
+</svg>
+
+<!-- ============ 내비게이션 바 ============ -->
+<header class="navbar" id="navbar">
+  <div class="nav-inner">
+    <div class="nav-side">
+      <button class="nav-btn hidden" id="navBack"><svg><use href="#i-back"/></svg><span id="navBackLbl">뒤로</span></button>
     </div>
-    <button class="theme-btn" id="themeBtn" title="테마 변경">🌓 자동</button>
+    <div class="nav-title" id="navTitle"></div>
+    <div class="nav-side right">
+      <button class="nav-btn txt hidden" id="navAction"></button>
+    </div>
   </div>
 </header>
 
-<!-- ============ 홈(메인 메뉴) ============ -->
-<main id="view-home" class="view">
-  <div class="wrap">
-    <section class="dash card">
-      <div class="dash-row">
-        <div class="dash-item"><span class="dash-num" id="statMcq">0</span><span class="dash-lbl">객관식</span></div>
-        <div class="dash-item"><span class="dash-num" id="statShort">0</span><span class="dash-lbl">주관식</span></div>
-        <div class="dash-item"><span class="dash-num" id="statWrong">0</span><span class="dash-lbl">오답</span></div>
-        <div class="dash-item"><span class="dash-num" id="statAcc">–</span><span class="dash-lbl">누적정답률</span></div>
-      </div>
-      <div class="progress-line"><div class="progress-fill" id="homeProgress"></div></div>
-      <p class="hint" id="homeProgressTxt">아직 푼 문제가 없어요. 아래 메뉴에서 시작하세요!</p>
-    </section>
+<!-- ============ 홈 ============ -->
+<main class="page view" id="v-home">
+  <h1 class="large-title">정보검색론</h1>
+  <p class="large-sub">중간고사 대비 학습 · 퀴즈</p>
 
-    <div class="menu-grid">
-      <button class="menu-btn" data-go="learn">
-        <span class="menu-ico">📖</span><span class="menu-t">학습 모드</span>
-        <span class="menu-d">주차·주제별 핵심 요약</span>
-      </button>
-      <button class="menu-btn" data-go="mcqSetup">
-        <span class="menu-ico">✅</span><span class="menu-t">객관식 퀴즈</span>
-        <span class="menu-d">4지선다 · 해설 포함</span>
-      </button>
-      <button class="menu-btn" data-go="shortSetup">
-        <span class="menu-ico">✏️</span><span class="menu-t">주관식 퀴즈</span>
-        <span class="menu-d">단답형 · 자동+자가채점</span>
-      </button>
-      <button class="menu-btn" data-go="examIntro">
-        <span class="menu-ico">📝</span><span class="menu-t">모의고사</span>
-        <span class="menu-d">객관식20+주관식10 · 시간제한</span>
-      </button>
-      <button class="menu-btn" data-go="wrong">
-        <span class="menu-ico">🔁</span><span class="menu-t">오답노트</span>
-        <span class="menu-d">틀린 문제만 다시 풀기</span>
-      </button>
-      <button class="menu-btn" data-go="reset">
-        <span class="menu-ico">🗑️</span><span class="menu-t">기록 초기화</span>
-        <span class="menu-d">진도·오답·점수 삭제</span>
-      </button>
+  <div class="card hero">
+    <div class="ring">
+      <svg viewBox="0 0 96 96">
+        <circle class="track" cx="48" cy="48" r="41.5"/>
+        <circle class="bar" id="ringBar" cx="48" cy="48" r="41.5" stroke-dasharray="260.75" stroke-dashoffset="260.75"/>
+      </svg>
+      <div class="ring-txt"><span class="ring-pct" id="ringPct">0%</span><span class="ring-lbl">진도</span></div>
     </div>
-    <p class="hint center foot">정보검색론(박정배 교수) 강의자료·중간고사 정리 기반 · 교육용 학습 도구</p>
+    <div class="hero-stats">
+      <div class="hstat"><span class="hstat-k">객관식</span><span class="hstat-v" id="stMcq">0 / 80</span></div>
+      <div class="hstat"><span class="hstat-k">주관식</span><span class="hstat-v" id="stShort">0 / 100</span></div>
+      <div class="hstat"><span class="hstat-k">누적 정답률</span><span class="hstat-v" id="stAcc">–</span></div>
+    </div>
+  </div>
+
+  <div class="group-hd">이어서 학습</div>
+  <div class="group">
+    <button class="row has-icon" data-go="mcq">
+      <span class="row-ico ic-blue"><svg><use href="#i-check"/></svg></span>
+      <span class="row-body"><span class="row-t">객관식 퀴즈</span><span class="row-d">4지선다 · 80문항</span></span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
+    <button class="row has-icon" data-go="short">
+      <span class="row-ico ic-orange"><svg><use href="#i-pencil"/></svg></span>
+      <span class="row-body"><span class="row-t">주관식 퀴즈</span><span class="row-d">단답형 · 100문항</span></span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
+    <button class="row has-icon" data-go="wrong">
+      <span class="row-ico ic-red"><svg><use href="#i-redo"/></svg></span>
+      <span class="row-body"><span class="row-t">오답노트</span><span class="row-d" id="homeWrongD">틀린 문제 다시 풀기</span></span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
+  </div>
+  <p class="group-ft" id="homeFoot">아직 푼 문제가 없어요. 위에서 시작해 보세요.</p>
+</main>
+
+<!-- ============ 학습 (섹션 목록) ============ -->
+<main class="page view hidden" id="v-learn">
+  <h1 class="large-title">학습</h1>
+  <p class="large-sub">주차별 핵심 요약</p>
+  <div class="group" id="learnList"></div>
+  <p class="group-ft">강의자료(정보검색론) 1~12장을 시험 범위 중심으로 요약했습니다.</p>
+</main>
+
+<!-- ============ 학습 상세 ============ -->
+<main class="page view hidden" id="v-learnDetail">
+  <div class="pushed-top"></div>
+  <div id="learnCards"></div>
+</main>
+
+<!-- ============ 문제 ============ -->
+<main class="page view hidden" id="v-quizTab">
+  <h1 class="large-title">문제</h1>
+  <p class="large-sub">유형을 선택해 시작하세요</p>
+
+  <div class="group-hd">연습 문제</div>
+  <div class="group">
+    <button class="row has-icon" data-go="mcq">
+      <span class="row-ico ic-blue"><svg><use href="#i-check"/></svg></span>
+      <span class="row-body"><span class="row-t">객관식</span><span class="row-d">4지선다 · 해설 포함</span></span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
+    <button class="row has-icon" data-go="short">
+      <span class="row-ico ic-orange"><svg><use href="#i-pencil"/></svg></span>
+      <span class="row-body"><span class="row-t">주관식</span><span class="row-d">단답형 · 자동+자가채점</span></span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
+  </div>
+
+  <div class="group-hd">실전</div>
+  <div class="group">
+    <button class="row has-icon" data-go="exam">
+      <span class="row-ico ic-purple"><svg><use href="#i-doc"/></svg></span>
+      <span class="row-body"><span class="row-t">모의고사</span><span class="row-d">객관식 20 + 주관식 10 · 시간제한</span></span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
+    <button class="row has-icon" data-go="wrong">
+      <span class="row-ico ic-red"><svg><use href="#i-redo"/></svg></span>
+      <span class="row-body"><span class="row-t">오답노트</span><span class="row-d" id="quizWrongD">틀린 문제 다시 풀기</span></span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
   </div>
 </main>
 
-<!-- ============ 학습 모드 ============ -->
-<section id="view-learn" class="view hidden">
-  <div class="wrap">
-    <div class="subnav">
-      <button class="btn back" data-go="home">← 홈</button>
-      <span class="subnav-title">학습 모드</span>
-    </div>
-    <div class="chips" id="learnSecChips"></div>
-    <div id="learnCards"></div>
+<!-- ============ 퀴즈 설정 ============ -->
+<main class="page view hidden" id="v-setup">
+  <div class="pushed-top"></div>
+  <div class="group-hd">출제 범위</div>
+  <div class="group">
+    <button class="row" id="topicRow">
+      <span class="row-body"><span class="row-t">주제 선택</span></span>
+      <span class="row-val" id="topicVal">전체</span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
   </div>
-</section>
 
-<!-- ============ 퀴즈 설정(객관식/주관식 공용) ============ -->
-<section id="view-setup" class="view hidden">
-  <div class="wrap">
-    <div class="subnav">
-      <button class="btn back" data-go="home">← 홈</button>
-      <span class="subnav-title" id="setupTitle">퀴즈 설정</span>
-    </div>
-    <div class="card">
-      <label class="fld">출제 주제 선택</label>
-      <div class="chips" id="topicChips"></div>
-      <div class="row wrap-row" style="margin-top:14px">
-        <button class="btn gray sm" id="topicAll">전체 선택</button>
-        <button class="btn gray sm" id="topicNone">전체 해제</button>
-      </div>
+  <div class="group-hd">문항 수</div>
+  <div class="segmented" id="countSeg"></div>
 
-      <label class="fld" style="margin-top:18px">문항 수</label>
-      <div class="chips" id="countChips"></div>
-
-      <label class="fld" style="margin-top:18px">출제 순서</label>
-      <div class="chips" id="orderChips">
-        <div class="chip active" data-order="random">랜덤</div>
-        <div class="chip" data-order="seq">순서대로</div>
-      </div>
-
-      <div class="row" style="margin-top:22px">
-        <button class="btn primary big" id="startQuizBtn">퀴즈 시작 →</button>
-      </div>
-      <p class="hint" id="setupInfo"></p>
-    </div>
+  <div class="group-hd">출제 순서</div>
+  <div class="segmented" id="orderSeg">
+    <button class="seg active" data-v="random">랜덤</button>
+    <button class="seg" data-v="seq">순서대로</button>
   </div>
-</section>
+  <p class="group-ft" id="setupInfo"></p>
+
+  <div style="height:26px"></div>
+  <div class="btn-stack"><button class="btn filled" id="startQuiz">시작하기</button></div>
+</main>
+
+<!-- ============ 주제 선택 ============ -->
+<main class="page view hidden" id="v-topics">
+  <div class="pushed-top"></div>
+  <div class="group" id="topicList"></div>
+  <div style="height:20px"></div>
+</main>
 
 <!-- ============ 모의고사 인트로 ============ -->
-<section id="view-examIntro" class="view hidden">
-  <div class="wrap">
-    <div class="subnav">
-      <button class="btn back" data-go="home">← 홈</button>
-      <span class="subnav-title">모의고사</span>
-    </div>
-    <div class="card">
-      <h2 class="exam-h">📝 실전 모의고사</h2>
-      <ul class="exam-desc">
-        <li>객관식 <b>20문항</b> + 주관식 <b>10문항</b> (총 30문항, 랜덤 출제)</li>
-        <li>제한 시간 <b id="examMinLbl">25</b>분 · 문항당 배점 자동 계산</li>
-        <li>제출 시 채점 결과와 오답 해설을 확인할 수 있어요</li>
-        <li>틀린 문항은 자동으로 오답노트에 저장됩니다</li>
-      </ul>
-      <label class="fld">제한 시간</label>
-      <div class="chips" id="examTimeChips">
-        <div class="chip" data-min="15">15분</div>
-        <div class="chip active" data-min="25">25분</div>
-        <div class="chip" data-min="40">40분</div>
-        <div class="chip" data-min="0">시간제한 없음</div>
-      </div>
-      <div class="row" style="margin-top:22px">
-        <button class="btn primary big" id="startExamBtn">모의고사 시작 →</button>
-      </div>
+<main class="page view hidden" id="v-exam">
+  <div class="pushed-top"></div>
+  <div class="res-hero" style="padding-top:8px">
+    <div class="res-emoji">📝</div>
+    <h2 class="res-h">실전 모의고사</h2>
+    <p class="res-sub">객관식 20 + 주관식 10 · 총 30문항</p>
+  </div>
+
+  <div class="group-hd">제한 시간</div>
+  <div class="segmented" id="examSeg">
+    <button class="seg" data-v="15">15분</button>
+    <button class="seg active" data-v="25">25분</button>
+    <button class="seg" data-v="40">40분</button>
+    <button class="seg" data-v="0">무제한</button>
+  </div>
+
+  <div class="group-hd">안내</div>
+  <div class="group">
+    <div class="row has-icon"><span class="row-ico ic-blue"><svg><use href="#i-check"/></svg></span>
+      <span class="row-body"><span class="row-t" style="font-size:15px">전 범위 랜덤 출제</span><span class="row-d">매번 새로운 문항 조합</span></span></div>
+    <div class="row has-icon"><span class="row-ico ic-green"><svg><use href="#i-bulb"/></svg></span>
+      <span class="row-body"><span class="row-t" style="font-size:15px">제출 후 해설 확인</span><span class="row-d">시험 중에는 정답이 공개되지 않아요</span></span></div>
+    <div class="row has-icon"><span class="row-ico ic-red"><svg><use href="#i-redo"/></svg></span>
+      <span class="row-body"><span class="row-t" style="font-size:15px">오답 자동 저장</span><span class="row-d">틀린 문항은 오답노트로</span></span></div>
+  </div>
+
+  <div style="height:26px"></div>
+  <div class="btn-stack"><button class="btn filled" id="startExam">모의고사 시작</button></div>
+</main>
+
+<!-- ============ 설정 ============ -->
+<main class="page view hidden" id="v-settings">
+  <h1 class="large-title">설정</h1>
+
+  <div class="group-hd">화면</div>
+  <div class="group">
+    <div class="row has-icon">
+      <span class="row-ico ic-indigo"><svg><use href="#i-theme"/></svg></span>
+      <span class="row-body"><span class="row-t">테마</span></span>
     </div>
   </div>
-</section>
-
-<!-- ============ 퀴즈 진행 ============ -->
-<section id="view-quiz" class="view hidden">
-  <div class="quiz-topbar">
-    <button class="btn back sm" id="quizQuit">← 나가기</button>
-    <div class="quiz-meta">
-      <span id="quizProgressLbl">1 / 10</span>
-      <span class="quiz-timer hidden" id="quizTimer">25:00</span>
-    </div>
-    <div class="quiz-score-badge" id="quizScoreBadge">0점</div>
+  <div style="height:10px"></div>
+  <div class="segmented" id="themeSeg">
+    <button class="seg" data-v="auto">자동</button>
+    <button class="seg" data-v="light">라이트</button>
+    <button class="seg" data-v="dark">다크</button>
   </div>
-  <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBarFill"></div></div>
+  <p class="group-ft">'자동'은 기기의 다크 모드 설정을 따릅니다.</p>
 
-  <div class="wrap">
-    <div class="qcard card">
-      <div class="q-top">
-        <span class="q-topic" id="qTopic">주제</span>
-        <span class="q-type" id="qType">객관식</span>
+  <div class="group-hd">학습 기록</div>
+  <div class="group">
+    <div class="row has-icon">
+      <span class="row-ico ic-teal"><svg><use href="#i-chart"/></svg></span>
+      <span class="row-body"><span class="row-t">푼 문항</span></span>
+      <span class="row-val" id="setSeen">0</span>
+    </div>
+    <div class="row has-icon">
+      <span class="row-ico ic-green"><svg><use href="#i-check"/></svg></span>
+      <span class="row-body"><span class="row-t">누적 정답률</span></span>
+      <span class="row-val" id="setAcc">–</span>
+    </div>
+    <div class="row has-icon">
+      <span class="row-ico ic-red"><svg><use href="#i-redo"/></svg></span>
+      <span class="row-body"><span class="row-t">오답 문항</span></span>
+      <span class="row-val" id="setWrong">0</span>
+    </div>
+  </div>
+
+  <div style="height:24px"></div>
+  <div class="group">
+    <button class="row destructive center" id="resetBtn"><span class="row-t">학습 기록 초기화</span></button>
+  </div>
+  <p class="group-ft">진도 · 오답노트 · 점수가 모두 삭제됩니다. 되돌릴 수 없습니다.</p>
+
+  <div class="group-hd">정보</div>
+  <div class="group">
+    <div class="row has-icon">
+      <span class="row-ico ic-gray"><svg><use href="#i-info"/></svg></span>
+      <span class="row-body"><span class="row-t">문항 수</span></span>
+      <span class="row-val">객관식 80 · 주관식 100</span>
+    </div>
+  </div>
+  <p class="group-ft">정보검색론(박정배 교수) 강의자료 및 중간고사 문제 정리 기반 · 교육용 학습 도구</p>
+</main>
+
+<!-- ============ 퀴즈 실행 (풀스크린) ============ -->
+<section class="view hidden" id="v-run">
+  <div class="run-hd">
+    <div class="run-hd-inner">
+      <button class="run-close" id="runClose"><svg><use href="#i-x"/></svg></button>
+      <span class="run-count" id="runCount">1 / 10</span>
+      <span class="run-timer hidden" id="runTimer">25:00</span>
+    </div>
+    <div class="run-bar"><div class="run-bar-fill" id="runBar"></div></div>
+  </div>
+
+  <div class="run-body">
+    <div class="q-meta">
+      <span class="q-badge" id="qBadge">주제</span>
+      <span class="q-kind" id="qKind">객관식</span>
+    </div>
+    <div class="q-text" id="qText"></div>
+
+    <div class="opts" id="qOpts"></div>
+
+    <div class="short-box hidden" id="qShortBox">
+      <input type="text" class="short-in" id="qShortIn" placeholder="답을 입력하세요"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+    </div>
+
+    <div class="fb hidden" id="qFb"></div>
+    <div class="exp hidden" id="qExp"></div>
+  </div>
+
+  <div class="run-ft">
+    <div class="run-ft-inner">
+      <div class="ft-row" id="ftSecondary">
+        <button class="btn gray" id="qExpBtn">💡 해설 보기</button>
+        <button class="btn gray" id="qSkip">🤷 모름 · 넘기기</button>
       </div>
-      <div class="q-text" id="qText"></div>
-
-      <!-- 객관식 보기 -->
-      <div class="opts" id="qOpts"></div>
-
-      <!-- 주관식 입력 -->
-      <div class="short-wrap hidden" id="qShortWrap">
-        <input type="text" class="short-input" id="qShortInput" placeholder="답을 입력하고 확인을 누르세요" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <button class="btn primary" id="qShortSubmit">확인</button>
+      <div class="ft-row hidden" id="ftSelf">
+        <button class="btn tinted" id="qSelfRight">✓ 정답으로 인정</button>
       </div>
-
-      <!-- 피드백/해설 -->
-      <div class="feedback hidden" id="qFeedback"></div>
-      <div class="explain hidden" id="qExplain"></div>
-
-      <div class="q-actions">
-        <button class="btn gray" id="qExplainBtn">💡 해설 보기</button>
-        <div class="q-actions-right">
-          <button class="btn ghost" id="qSkip">🤷 모름 · 넘기기</button>
-          <button class="btn ghost hidden" id="qSelfWrong">✗ 틀림</button>
-          <button class="btn ghost hidden" id="qSelfRight">✓ 맞음</button>
-          <button class="btn primary hidden" id="qNext">다음 →</button>
-        </div>
-      </div>
+      <button class="btn filled hidden" id="qSubmit">확인</button>
+      <button class="btn filled hidden" id="qNext">다음</button>
     </div>
   </div>
 </section>
 
 <!-- ============ 결과 ============ -->
-<section id="view-result" class="view hidden">
-  <div class="wrap">
-    <div class="result-card card">
-      <div class="result-emoji" id="resultEmoji">🎉</div>
-      <h2 class="result-h" id="resultH">퀴즈 완료!</h2>
-      <div class="result-score" id="resultScore">0 / 0</div>
-      <div class="result-pct" id="resultPct">0%</div>
-      <div class="result-detail" id="resultDetail"></div>
-      <div class="row col" style="margin-top:20px">
-        <button class="btn primary big" id="resultReview">📋 문항별 다시 보기</button>
-        <button class="btn gray big hidden" id="resultRetryWrong">🔁 틀린 문제만 다시 풀기</button>
-        <button class="btn ghost big" data-go="home">홈으로</button>
-      </div>
-    </div>
-    <div id="reviewList" class="hidden"></div>
+<section class="page view hidden" id="v-result">
+  <div class="pushed-top"></div>
+  <div class="res-hero">
+    <div class="res-emoji" id="resEmoji">🎉</div>
+    <h2 class="res-h" id="resH">완료!</h2>
+    <div class="res-score" id="resScore">0 / 0</div>
+    <div class="res-sub" id="resSub"></div>
+    <div id="resGradeWrap"></div>
+  </div>
+
+  <div style="height:16px"></div>
+  <div class="btn-stack">
+    <button class="btn tinted hidden" id="resRetry">🔁 틀린 문제만 다시 풀기</button>
+    <button class="btn gray" id="resReview">📋 문항별 다시 보기</button>
+    <button class="btn plain" id="resHome">완료</button>
+  </div>
+
+  <div class="hidden" id="reviewWrap">
+    <div class="group-hd">문항 리뷰</div>
+    <div id="reviewList"></div>
   </div>
 </section>
 
-<!-- 스크립트 -->
+<!-- ============ 탭 바 ============ -->
+<nav class="tabbar" id="tabbar">
+  <div class="tabbar-inner">
+    <button class="tab active" data-tab="home"><svg><use href="#i-home"/></svg><span>홈</span></button>
+    <button class="tab" data-tab="learn"><svg><use href="#i-book"/></svg><span>학습</span></button>
+    <button class="tab" data-tab="quizTab"><svg><use href="#i-check"/></svg><span>문제</span></button>
+    <button class="tab" data-tab="settings"><svg><use href="#i-gear"/></svg><span>설정</span></button>
+  </div>
+</nav>
+
 <script src="data-mcq.js"></script>
 <script src="data-short.js"></script>
 <script src="data-notes.js"></script>
