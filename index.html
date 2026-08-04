@@ -47,7 +47,13 @@
 <!-- ============ 홈 ============ -->
 <main class="page view" id="v-home">
   <h1 class="large-title">정보검색론</h1>
-  <p class="large-sub">중간고사 대비 학습 · 퀴즈</p>
+  <p class="large-sub" id="homeSub">중간고사 대비 학습 · 퀴즈</p>
+
+  <div class="segmented" id="examSegHome">
+    <button class="seg active" data-v="mid">중간고사</button>
+    <button class="seg" data-v="final">기말고사</button>
+  </div>
+  <div style="height:18px"></div>
 
   <div class="card hero">
     <div class="ring">
@@ -68,12 +74,12 @@
   <div class="group">
     <button class="row has-icon" data-go="mcq">
       <span class="row-ico ic-blue"><svg><use href="#i-check"/></svg></span>
-      <span class="row-body"><span class="row-t">객관식 퀴즈</span><span class="row-d">4지선다 · 80문항</span></span>
+      <span class="row-body"><span class="row-t">객관식 퀴즈</span><span class="row-d" id="rowMcqD">4지선다 · 80문항</span></span>
       <svg class="chev"><use href="#i-chev"/></svg>
     </button>
     <button class="row has-icon" data-go="short">
       <span class="row-ico ic-orange"><svg><use href="#i-pencil"/></svg></span>
-      <span class="row-body"><span class="row-t">주관식 퀴즈</span><span class="row-d">단답형 · 100문항</span></span>
+      <span class="row-body"><span class="row-t">주관식 퀴즈</span><span class="row-d" id="rowShortD">단답형 · 100문항</span></span>
       <svg class="chev"><use href="#i-chev"/></svg>
     </button>
     <button class="row has-icon" data-go="wrong">
@@ -88,9 +94,9 @@
 <!-- ============ 학습 (섹션 목록) ============ -->
 <main class="page view hidden" id="v-learn">
   <h1 class="large-title">학습</h1>
-  <p class="large-sub">주차별 핵심 요약</p>
+  <p class="large-sub" id="learnSub">주차별 핵심 요약</p>
   <div class="group" id="learnList"></div>
-  <p class="group-ft">강의자료(정보검색론) 1~12장을 시험 범위 중심으로 요약했습니다.</p>
+  <p class="group-ft" id="learnFoot">강의자료(정보검색론)를 시험 범위 중심으로 요약했습니다.</p>
 </main>
 
 <!-- ============ 학습 상세 ============ -->
@@ -102,7 +108,7 @@
 <!-- ============ 문제 ============ -->
 <main class="page view hidden" id="v-quizTab">
   <h1 class="large-title">문제</h1>
-  <p class="large-sub">유형을 선택해 시작하세요</p>
+  <p class="large-sub" id="quizSub">유형을 선택해 시작하세요</p>
 
   <div class="group-hd">연습 문제</div>
   <div class="group">
@@ -219,6 +225,11 @@
   <div class="group-hd">학습 기록</div>
   <div class="group">
     <div class="row has-icon">
+      <span class="row-ico ic-purple"><svg><use href="#i-doc"/></svg></span>
+      <span class="row-body"><span class="row-t">현재 시험</span></span>
+      <span class="row-val" id="setExamName">중간고사</span>
+    </div>
+    <div class="row has-icon">
       <span class="row-ico ic-teal"><svg><use href="#i-chart"/></svg></span>
       <span class="row-body"><span class="row-t">푼 문항</span></span>
       <span class="row-val" id="setSeen">0</span>
@@ -239,17 +250,17 @@
   <div class="group">
     <button class="row destructive center" id="resetBtn"><span class="row-t">학습 기록 초기화</span></button>
   </div>
-  <p class="group-ft">진도 · 오답노트 · 점수가 모두 삭제됩니다. 되돌릴 수 없습니다.</p>
+  <p class="group-ft">현재 선택된 시험의 진도 · 오답노트 · 점수만 삭제됩니다. 되돌릴 수 없습니다.</p>
 
   <div class="group-hd">정보</div>
   <div class="group">
     <div class="row has-icon">
       <span class="row-ico ic-gray"><svg><use href="#i-info"/></svg></span>
       <span class="row-body"><span class="row-t">문항 수</span></span>
-      <span class="row-val">객관식 80 · 주관식 100</span>
+      <span class="row-val" id="setCounts">객관식 80 · 주관식 100</span>
     </div>
   </div>
-  <p class="group-ft">정보검색론(박정배 교수) 강의자료 및 중간고사 문제 정리 기반 · 교육용 학습 도구</p>
+  <p class="group-ft">정보검색론 강의자료 기반 · 중간고사(1~5장) / 기말고사(6~12장) · 교육용 학습 도구</p>
 </main>
 
 <!-- ============ 퀴즈 실행 (풀스크린) ============ -->
@@ -330,8 +341,10 @@
   </div>
 </nav>
 
-<script src="data-mcq.js"></script>
-<script src="data-short.js"></script>
+<script src="data-mcq-mid.js"></script>
+<script src="data-short-mid.js"></script>
+<script src="data-mcq-final.js"></script>
+<script src="data-short-final.js"></script>
 <script src="data-notes.js"></script>
 <script src="app.js"></script>
 </body>

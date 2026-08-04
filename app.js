@@ -1,6 +1,8 @@
 /* ============================================================
    정보검색론 — 앱 로직 (iOS 스타일 내비게이션)
-   데이터: MCQ / SHORT / NOTES
+   데이터: MCQ_MID / SHORT_MID / NOTES_MID (중간고사 1~5장)
+          MCQ_FINAL / SHORT_FINAL / NOTES_FINAL (기말고사 6~12장)
+   진도·오답노트는 시험(mid/final)별로 분리 저장
    ============================================================ */
 'use strict';
 
@@ -19,12 +21,42 @@ function toast(msg){
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), 1900);
 }
 
-/* ---------- 저장소 ---------- */
-const STORE_KEY='ir_study_v1';
+/* ---------- 시험 구분 (중간고사 / 기말고사) ---------- */
+const EXAMS = {
+  mid:   { label:'중간고사', range:'1~5장',  sub:'중간고사 대비 학습 · 퀴즈',
+           mcq:MCQ_MID,   short:SHORT_MID,   notes:NOTES_MID },
+  final: { label:'기말고사', range:'6~12장', sub:'기말고사 대비 학습 · 퀴즈',
+           mcq:MCQ_FINAL, short:SHORT_FINAL, notes:NOTES_FINAL },
+};
+const EXAM_KEY='ir_exam';
+let curExam = (()=>{ const e=localStorage.getItem(EXAM_KEY); return EXAMS[e]?e:'mid'; })();
+
+const mcqPool   = ()=>EXAMS[curExam].mcq;
+const shortPool = ()=>EXAMS[curExam].short;
+const notesOf   = ()=>EXAMS[curExam].notes;
+
+/* ---------- 저장소 (시험별로 분리 저장) ---------- */
+const STORE_KEY='ir_study_v2';
+const LEGACY_KEY='ir_study_v1';
+const blankRec = ()=>({ seen:{}, wrong:{}, correctCount:0, answeredCount:0 });
 const store={
-  data:{ seen:{}, wrong:{}, correctCount:0, answeredCount:0 },
-  load(){ try{ const s=JSON.parse(localStorage.getItem(STORE_KEY)); if(s) this.data=Object.assign(this.data,s); }catch(e){} },
-  save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(this.data)); }catch(e){} },
+  all:{ mid:blankRec(), final:blankRec() },
+  get data(){ return this.all[curExam]; },
+  load(){
+    try{
+      const s=JSON.parse(localStorage.getItem(STORE_KEY));
+      if(s){
+        for(const k of ['mid','final']) if(s[k]) this.all[k]=Object.assign(blankRec(), s[k]);
+        return;
+      }
+    }catch(e){}
+    // v1(시험 구분 없음) → 중간고사 기록으로 이전. 당시 콘텐츠가 중간고사 범위뿐이었음.
+    try{
+      const old=JSON.parse(localStorage.getItem(LEGACY_KEY));
+      if(old){ this.all.mid=Object.assign(blankRec(), old); this.save(); }
+    }catch(e){}
+  },
+  save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(this.all)); }catch(e){} },
   record(id, ok){
     this.data.seen[id]=true;
     this.data.answeredCount++;
@@ -32,7 +64,7 @@ const store={
     else { this.data.wrong[id]=true; }
     this.save();
   },
-  reset(){ this.data={ seen:{}, wrong:{}, correctCount:0, answeredCount:0 }; this.save(); }
+  reset(){ this.all[curExam]=blankRec(); this.save(); }
 };
 store.load();
 
@@ -73,6 +105,7 @@ function shortMatch(input, answers){
   });
 }
 const topicsOf = pool => [...new Set(pool.map(q=>q.topic))];
+const poolOf   = mode => mode==='mcq' ? mcqPool() : shortPool();
 
 /* ============================================================
    라우터 (탭 + 푸시 스택)
@@ -156,16 +189,22 @@ document.addEventListener('click', e=>{
    홈
    ============================================================ */
 function renderHome(){
-  const seenM=MCQ.filter(q=>store.data.seen[q.id]).length;
-  const seenS=SHORT.filter(q=>store.data.seen[q.id]).length;
+  const mcq=mcqPool(), short=shortPool(), ex=EXAMS[curExam];
+  const seenM=mcq.filter(q=>store.data.seen[q.id]).length;
+  const seenS=short.filter(q=>store.data.seen[q.id]).length;
   const wrong=Object.keys(store.data.wrong).length;
   const ans=store.data.answeredCount, cor=store.data.correctCount;
 
-  $('#stMcq').textContent   = `${seenM} / ${MCQ.length}`;
-  $('#stShort').textContent = `${seenS} / ${SHORT.length}`;
+  $('#homeSub').textContent = ex.sub;
+  $$('#examSegHome .seg').forEach(b=>b.classList.toggle('active', b.dataset.v===curExam));
+  $('#rowMcqD').textContent   = `4지선다 · ${mcq.length}문항`;
+  $('#rowShortD').textContent = `단답형 · ${short.length}문항`;
+
+  $('#stMcq').textContent   = `${seenM} / ${mcq.length}`;
+  $('#stShort').textContent = `${seenS} / ${short.length}`;
   $('#stAcc').textContent   = ans? Math.round(cor/ans*100)+'%' : '–';
 
-  const total=MCQ.length+SHORT.length, seen=seenM+seenS;
+  const total=mcq.length+short.length, seen=seenM+seenS;
   const pct = total? Math.round(seen/total*100):0;
   $('#ringPct').textContent = pct+'%';
   const C=2*Math.PI*41.5;
@@ -175,32 +214,56 @@ function renderHome(){
   const wd = wrong? `${wrong}문항 · 다시 풀기` : '틀린 문제 다시 풀기';
   $('#homeWrongD').textContent = wd;
   $('#homeFoot').textContent = seen
-    ? `전체 ${total}문항 중 ${seen}문항 학습 · 누적 정답 ${cor}/${ans}`
-    : '아직 푼 문제가 없어요. 위에서 시작해 보세요.';
+    ? `${ex.label} 전체 ${total}문항 중 ${seen}문항 학습 · 누적 정답 ${cor}/${ans}`
+    : `${ex.label} 범위(${ex.range})예요. 아직 푼 문제가 없어요 — 위에서 시작해 보세요.`;
 }
 function renderQuizTab(){
   const wrong=Object.keys(store.data.wrong).length;
+  const ex=EXAMS[curExam];
+  $('#quizSub').textContent = `${ex.label} · ${ex.range} · 유형을 선택해 시작하세요`;
   $('#quizWrongD').textContent = wrong? `${wrong}문항 · 다시 풀기` : '틀린 문제 다시 풀기';
 }
 function renderSettings(){
+  const mcq=mcqPool(), short=shortPool(), ex=EXAMS[curExam];
   const seen=Object.keys(store.data.seen).length;
   const ans=store.data.answeredCount, cor=store.data.correctCount;
-  $('#setSeen').textContent = `${seen} / ${MCQ.length+SHORT.length}`;
+  $('#setExamName').textContent = `${ex.label} (${ex.range})`;
+  $('#setSeen').textContent = `${seen} / ${mcq.length+short.length}`;
   $('#setAcc').textContent  = ans? `${Math.round(cor/ans*100)}%  (${cor}/${ans})` : '–';
   $('#setWrong').textContent = Object.keys(store.data.wrong).length;
+  $('#setCounts').textContent = `객관식 ${mcq.length} · 주관식 ${short.length}`;
 }
 $('#resetBtn').onclick = ()=>{
-  if(confirm('학습 기록을 모두 삭제할까요?\n진도 · 오답노트 · 점수가 초기화되며 되돌릴 수 없습니다.')){
-    store.reset(); renderSettings(); renderHome(); renderQuizTab(); toast('학습 기록을 초기화했어요');
+  const ex=EXAMS[curExam];
+  if(confirm(`${ex.label} 학습 기록을 삭제할까요?\n진도 · 오답노트 · 점수가 초기화되며 되돌릴 수 없습니다.\n(다른 시험의 기록은 그대로 유지됩니다.)`)){
+    store.reset(); renderSettings(); renderHome(); renderQuizTab(); toast(`${ex.label} 학습 기록을 초기화했어요`);
   }
 };
+
+/* ---------- 시험 전환 ---------- */
+function setExam(exam){
+  if(!EXAMS[exam] || exam===curExam) return;
+  curExam=exam;
+  localStorage.setItem(EXAM_KEY, exam);
+  stack=[]; fullscreen=null;
+  renderHome(); renderLearnList(); renderQuizTab(); renderSettings();
+  render();
+  toast(`${EXAMS[exam].label} 범위로 전환했어요`);
+}
+$('#examSegHome').addEventListener('click', e=>{
+  const b=e.target.closest('.seg'); if(!b) return;
+  setExam(b.dataset.v);
+});
 
 /* ============================================================
    학습
    ============================================================ */
 function renderLearnList(){
+  const ex=EXAMS[curExam];
+  $('#learnSub').textContent  = `${ex.label} 범위 · 주차별 핵심 요약`;
+  $('#learnFoot').textContent = `강의자료(정보검색론) ${ex.range}을 ${ex.label} 범위 중심으로 요약했습니다.`;
   const el=$('#learnList'); el.innerHTML='';
-  NOTES.forEach((n,i)=>{
+  notesOf().forEach((n,i)=>{
     const b=document.createElement('button');
     b.className='row has-icon';
     b.innerHTML =
@@ -213,7 +276,7 @@ function renderLearnList(){
   });
 }
 function openLearnDetail(i){
-  const sec=NOTES[i];
+  const sec=notesOf()[i];
   const wrap=$('#learnCards'); wrap.innerHTML='';
   sec.cards.forEach(c=>{
     const d=document.createElement('div'); d.className='note';
@@ -231,7 +294,7 @@ function openLearnDetail(i){
 let setup={ mode:'mcq', topics:new Set(), count:10, order:'random' };
 
 function openSetup(mode){
-  const pool = mode==='mcq'?MCQ:SHORT;
+  const pool = poolOf(mode);
   setup={ mode, topics:new Set(topicsOf(pool)), count:10, order:'random' };
 
   // 문항 수 세그먼트
@@ -261,11 +324,11 @@ $('#orderSeg').addEventListener('click', e=>{
   setup.order=b.dataset.v;
 });
 function availCount(){
-  const pool=setup.mode==='mcq'?MCQ:SHORT;
+  const pool=poolOf(setup.mode);
   return pool.filter(q=>setup.topics.has(q.topic)).length;
 }
 function updateSetupInfo(){
-  const pool=setup.mode==='mcq'?MCQ:SHORT;
+  const pool=poolOf(setup.mode);
   const all=topicsOf(pool).length, sel=setup.topics.size, avail=availCount();
   $('#topicVal').textContent = sel===all?'전체':(sel===0?'없음':`${sel}개 주제`);
   const want = setup.count==='전체'?avail:Math.min(setup.count, avail);
@@ -275,7 +338,7 @@ function updateSetupInfo(){
 $('#topicRow').onclick = openTopics;
 
 function openTopics(){
-  const pool=setup.mode==='mcq'?MCQ:SHORT;
+  const pool=poolOf(setup.mode);
   const topics=topicsOf(pool);
   const el=$('#topicList'); el.innerHTML='';
   topics.forEach(tp=>{
@@ -296,7 +359,7 @@ function openTopics(){
   updateTopicsAction();
 }
 function updateTopicsAction(){
-  const pool=setup.mode==='mcq'?MCQ:SHORT;
+  const pool=poolOf(setup.mode);
   const all=topicsOf(pool).length;
   const act=$('#navAction');
   act.classList.remove('hidden');
@@ -304,7 +367,7 @@ function updateTopicsAction(){
   act.onclick=toggleAllTopics;
 }
 function toggleAllTopics(){
-  const pool=setup.mode==='mcq'?MCQ:SHORT;
+  const pool=poolOf(setup.mode);
   const topics=topicsOf(pool);
   if(setup.topics.size===topics.length) setup.topics.clear();
   else setup.topics=new Set(topics);
@@ -313,7 +376,7 @@ function toggleAllTopics(){
 }
 
 $('#startQuiz').onclick = ()=>{
-  const pool=setup.mode==='mcq'?MCQ:SHORT;
+  const pool=poolOf(setup.mode);
   let qs=pool.filter(q=>setup.topics.has(q.topic));
   if(!qs.length){ toast('주제를 하나 이상 선택하세요'); return; }
   qs = setup.order==='random'?shuffle(qs):qs.slice();
@@ -332,8 +395,8 @@ $('#examSeg').addEventListener('click', e=>{
   examMin=+b.dataset.v;
 });
 $('#startExam').onclick = ()=>{
-  const m=shuffle(MCQ).slice(0,20).map(q=>({...q,_type:'mcq'}));
-  const s=shuffle(SHORT).slice(0,10).map(q=>({...q,_type:'short'}));
+  const m=shuffle(mcqPool()).slice(0,20).map(q=>({...q,_type:'mcq'}));
+  const s=shuffle(shortPool()).slice(0,10).map(q=>({...q,_type:'short'}));
   startQuiz(shuffle([...m,...s]), { kind:'exam', minutes:examMin });
 };
 
@@ -343,7 +406,9 @@ $('#startExam').onclick = ()=>{
 function startWrongQuiz(){
   const ids=Object.keys(store.data.wrong);
   if(!ids.length){ toast('오답이 없어요. 먼저 문제를 풀어보세요 👍'); return; }
-  const map={}; MCQ.forEach(q=>map[q.id]={...q,_type:'mcq'}); SHORT.forEach(q=>map[q.id]={...q,_type:'short'});
+  const map={};
+  mcqPool().forEach(q=>map[q.id]={...q,_type:'mcq'});
+  shortPool().forEach(q=>map[q.id]={...q,_type:'short'});
   const qs=ids.map(id=>map[id]).filter(Boolean);
   if(!qs.length){ toast('오답 데이터를 찾을 수 없어요'); return; }
   startQuiz(shuffle(qs), { kind:'practice' });
