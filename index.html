@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SOOM QUIZ">
+<title>SOOM QUIZ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 6.5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+</svg>
+
+<header class="navbar" id="navbar">
+  <div class="nav-inner">
+    <div class="nav-side">
+      <button class="nav-btn hidden" id="navBack"><svg><use href="#i-back"/></svg><span id="navBackLbl">뒤로</span></button>
+    </div>
+    <div class="nav-title" id="navTitle"></div>
+    <div class="nav-side right">
+      <button class="nav-btn txt hidden" id="navAction"></button>
+    </div>
+  </div>
+</header>
+
+<!-- 허브 -->
+<main class="page view" id="v-hub">
+  <header class="hub-hero">
+    <div class="hub-badge">시험 대비</div>
+    <h1 class="large-title">SOOM QUIZ</h1>
+    <p class="hub-cta">과목을 골라 학습 · 퀴즈를 시작하세요</p>
+  </header>
+  <div class="tile-grid" id="hubList"></div>
+</main>
+
+<!-- 과목 홈 -->
+<main class="page view hidden" id="v-subject">
+  <header class="sub-hero">
+    <div class="sub-emoji" id="subEmoji">📚</div>
+    <h1 class="large-title" id="subTitle">과목</h1>
+    <p class="exam-line" id="subExamLine"></p>
+    <p class="hub-cta" id="subCta">유형을 골라 연습해 보세요</p>
+  </header>
+
+  <div class="card hero" id="subHeroCard">
+    <div class="ring">
+      <svg viewBox="0 0 96 96">
+        <circle class="track" cx="48" cy="48" r="41.5"/>
+        <circle class="bar" id="ringBar" cx="48" cy="48" r="41.5" stroke-dasharray="260.75" stroke-dashoffset="260.75"/>
+      </svg>
+      <div class="ring-txt"><span class="ring-pct" id="ringPct">0%</span><span class="ring-lbl">진도</span></div>
+    </div>
+    <div class="hero-stats" id="heroStats"></div>
+  </div>
+
+  <div class="mode-block">
+    <div class="group-hd mode-hd">시험 · 학습</div>
+    <div class="tile-grid mode-grid" id="modePrimary"></div>
+  </div>
+  <div class="mode-block">
+    <div class="group-hd mode-hd">유형별 연습</div>
+    <div class="tile-grid mode-grid" id="modeAux"></div>
+  </div>
+
+  <div style="height:20px"></div>
+  <div class="group">
+    <button class="row destructive center" id="resetBtn"><span class="row-t">학습 기록 초기화</span></button>
+  </div>
+  <p class="group-ft" id="resetFoot">현재 과목(범위)의 진도 · 오답노트만 삭제됩니다.</p>
+</main>
+
+<!-- 학습 목록 -->
+<main class="page view hidden" id="v-learn">
+  <div class="pushed-top"></div>
+  <div class="tile-grid mode-grid" id="learnList"></div>
+  <p class="group-ft" id="learnFoot"></p>
+</main>
+
+<!-- 학습 상세 -->
+<main class="page view hidden" id="v-learnDetail">
+  <div class="pushed-top"></div>
+  <div id="learnCards"></div>
+</main>
+
+<!-- 퀴즈 설정 -->
+<main class="page view hidden" id="v-setup">
+  <div class="pushed-top"></div>
+  <div class="group-hd">출제 범위</div>
+  <div class="group">
+    <button class="row" id="topicRow">
+      <span class="row-body"><span class="row-t">주제 선택</span></span>
+      <span class="row-val" id="topicVal">전체</span>
+      <svg class="chev"><use href="#i-chev"/></svg>
+    </button>
+  </div>
+  <div class="group-hd">문항 수</div>
+  <div class="segmented" id="countSeg"></div>
+  <div class="group-hd">출제 순서</div>
+  <div class="segmented" id="orderSeg">
+    <button class="seg active" data-v="random">랜덤</button>
+    <button class="seg" data-v="seq">순서대로</button>
+  </div>
+  <p class="group-ft" id="setupInfo"></p>
+  <div style="height:26px"></div>
+  <div class="btn-stack"><button class="btn filled" id="startQuiz">시작하기</button></div>
+</main>
+
+<!-- 주제 선택 -->
+<main class="page view hidden" id="v-topics">
+  <div class="pushed-top"></div>
+  <div class="group" id="topicList"></div>
+</main>
+
+<!-- 모의고사 -->
+<main class="page view hidden" id="v-exam">
+  <div class="pushed-top"></div>
+  <div class="res-hero" style="padding-top:8px">
+    <div class="res-emoji">📝</div>
+    <h2 class="res-h">실전 모의고사</h2>
+    <p class="res-sub" id="examIntroSub">혼합 출제</p>
+  </div>
+  <div class="pin-banner"><strong>시험 형식</strong> — 시험 중에는 정답이 공개되지 않아요. 제출 후 해설을 확인합니다.</div>
+  <div class="group-hd">제한 시간</div>
+  <div class="segmented" id="examSeg">
+    <button class="seg" data-v="15">15분</button>
+    <button class="seg active" data-v="25">25분</button>
+    <button class="seg" data-v="40">40분</button>
+    <button class="seg" data-v="0">무제한</button>
+  </div>
+  <div style="height:26px"></div>
+  <div class="btn-stack"><button class="btn filled" id="startExam">모의고사 시작</button></div>
+</main>
+
+<!-- 퀴즈 실행 -->
+<section class="view hidden" id="v-run">
+  <div class="run-hd">
+    <div class="run-hd-inner">
+      <button class="run-close" id="runClose"><svg><use href="#i-x"/></svg></button>
+      <span class="run-count" id="runCount">1 / 10</span>
+      <span class="run-timer hidden" id="runTimer">25:00</span>
+    </div>
+    <div class="run-bar"><div class="run-bar-fill" id="runBar"></div></div>
+  </div>
+  <div class="run-body">
+    <div class="q-meta">
+      <span class="q-badge" id="qBadge">주제</span>
+      <span class="q-kind" id="qKind">객관식</span>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="opts" id="qOpts"></div>
+    <div class="short-box hidden" id="qShortBox">
+      <input type="text" class="short-in" id="qShortIn" placeholder="답을 입력하세요"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+    </div>
+    <div class="fb hidden" id="qFb"></div>
+    <div class="exp hidden" id="qExp"></div>
+  </div>
+  <div class="run-ft">
+    <div class="run-ft-inner">
+      <div class="ft-row" id="ftSecondary">
+        <button class="btn gray" id="qExpBtn">해설 보기</button>
+        <button class="btn gray" id="qSkip">모름 · 넘기기</button>
+      </div>
+      <div class="ft-row hidden" id="ftSelf">
+        <button class="btn tinted" id="qSelfRight">✓ 정답으로 인정</button>
+      </div>
+      <button class="btn filled hidden" id="qSubmit">확인</button>
+      <button class="btn filled hidden" id="qNext">다음</button>
+    </div>
+  </div>
+</section>
+
+<!-- 결과 -->
+<section class="page view hidden" id="v-result">
+  <div class="pushed-top"></div>
+  <div class="res-hero">
+    <div class="res-emoji" id="resEmoji">🎉</div>
+    <h2 class="res-h" id="resH">완료!</h2>
+    <div class="res-score" id="resScore">0 / 0</div>
+    <div class="res-sub" id="resSub"></div>
+    <div id="resGradeWrap"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="btn-stack">
+    <button class="btn tinted hidden" id="resRetry">틀린 문제만 다시 풀기</button>
+    <button class="btn gray" id="resReview">문항별 다시 보기</button>
+    <button class="btn plain" id="resHome">완료</button>
+  </div>
+  <div class="hidden" id="reviewWrap">
+    <div class="group-hd">문항 리뷰</div>
+    <div id="reviewList"></div>
+  </div>
+</section>
+
+<script src="subjects/catalog.js"></script>
+<script src="subjects/ir/mcq-final.js"></script>
+<script src="subjects/ir/short-final.js"></script>
+<script src="subjects/ir/notes.js"></script>
+<script src="subjects/mgmt/ox.js"></script>
+<script src="subjects/mgmt/mcq.js"></script>
+<script src="subjects/mgmt/short.js"></script>
+<script src="subjects/mgmt/notes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

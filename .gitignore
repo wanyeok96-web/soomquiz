@@ -1,0 +1,6 @@
+# 강의자료·로컬 산출물
+*.pdf
+_pdf_extract.txt
+_rebuild_data.py
+.DS_Store
+Thumbs.db
