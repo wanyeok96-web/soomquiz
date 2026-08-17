@@ -16,7 +16,7 @@ const SUBJECTS = [
     id: 'mgmt',
     name: '도서관·정보센터 경영론',
     emoji: '📚',
-    examLine: '객관식 20 + 단답 5 · 초록~시맨틱 웹',
+    examLine: '제8~13강 · 조직·인사·리더십·장서',
     hasExamSwitch: false,
     primary: ['exam', 'learn'],
     aux: ['mcq', 'short', 'wrong'],
